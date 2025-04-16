@@ -2,15 +2,16 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.anchorlayout import AnchorLayout
 
-from logic.Checker import Checker
 from components.ResultTable import ResultTable
 
 class ContentWKR(AnchorLayout):
 
-    def __init__(self, **kwargs):
+    def __init__(self, checker, **kwargs):
         super().__init__(**kwargs)
         self.anchor_x = 'center'
         self.anchor_y = 'top'
+
+        self.checker = checker
 
         layout = BoxLayout(orientation='vertical', spacing=20,
                            size_hint=(None, None))
@@ -34,8 +35,6 @@ class ContentWKR(AnchorLayout):
             height=30
         ))
 
-        checker = Checker()
-
         checks = {
             "Состав содержания": checker.check_content_structure,
             "Навигация": checker.check_navigation,
@@ -43,6 +42,15 @@ class ContentWKR(AnchorLayout):
             "Нумерация": checker.check_numbering
         }
 
-        result_table = ResultTable(checks)
-        layout.add_widget(result_table)
+        self.result_table = ResultTable(checks)
+        layout.add_widget(self.result_table)
         self.add_widget(layout)
+
+    def update_checks(self):
+        self.checks = {
+            "Состав содержания": self.checker.check_content_structure,
+            "Навигация": self.checker.check_navigation,
+            "Заголовки": self.checker.check_headings,
+            "Нумерация": self.checker.check_numbering
+        }
+        self.result_table.update_results(self.checks)

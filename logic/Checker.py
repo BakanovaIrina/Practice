@@ -1,9 +1,15 @@
+from kivy.app import App
+
 class Checker:
     # Методы проверки для Влада. Пока как заглушки
 
+    # Для всего (итоговая оценка отчета. Возврат только True или False)
+    def run_all_checks(self):
+        return True
     # Содержание ВКР
     def check_content_structure(self):
-        return None  # Заглушка
+        print("Файл:", App.get_running_app().selected_file)
+        return True
 
     def check_navigation(self):
         return False  # Заглушка

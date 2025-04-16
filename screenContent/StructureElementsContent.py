@@ -2,15 +2,16 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.anchorlayout import AnchorLayout
 
-from logic.Checker import Checker
 from components.ResultTable import ResultTable
 
 class StructureElementsContent(AnchorLayout):
 
-    def __init__(self, **kwargs):
+    def __init__(self, checker, **kwargs):
         super().__init__(**kwargs)
         self.anchor_x = 'center'
         self.anchor_y = 'top'
+
+        self.checker = checker
 
         layout = BoxLayout(orientation='vertical', spacing=20,
                            size_hint=(None, None), pos_hint={'center_x': 0.5})
@@ -34,8 +35,6 @@ class StructureElementsContent(AnchorLayout):
             height=30
         ))
 
-        checker = Checker()
-
         checks = {
             "Разделы и подразделы": checker.check_sections_and_subsections,
             "Список сокращений": checker.check_abbreviations_list,
@@ -45,7 +44,18 @@ class StructureElementsContent(AnchorLayout):
             "Приложение": checker.check_appendices,
         }
 
-        result_table = ResultTable(checks)
-        layout.add_widget(result_table)
+        self.result_table = ResultTable(checks)
+        layout.add_widget(self.result_table)
 
         self.add_widget(layout)
+
+    def update_checks(self):
+        self.checks = {
+            "Разделы и подразделы": self.checker.check_sections_and_subsections,
+            "Список сокращений": self.checker.check_abbreviations_list,
+            "Список терминов": self.checker.check_terms_list,
+            "Введение и заключение": self.checker.check_introduction_and_conclusion,
+            "Список источников": self.checker.check_sources_list,
+            "Приложение": self.checker.check_appendices,
+        }
+        self.result_table.update_results(self.checks)

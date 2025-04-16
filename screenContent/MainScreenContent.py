@@ -1,3 +1,6 @@
+from distutils.command.check import check
+
+from kivy.app import App
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.filechooser import FileChooserIconView
@@ -7,12 +10,13 @@ from kivy.uix.anchorlayout import AnchorLayout
 
 class MainScreenContent(AnchorLayout):
 
-    def __init__(self, **kwargs):
+    def __init__(self, screen_manager, checker, **kwargs):
         super().__init__(**kwargs)
         self.anchor_x = 'center'
         self.anchor_y = 'top'
+        self.screen_manager = screen_manager
+        self.checker = checker
 
-        self.selected_file = None
 
         layout = BoxLayout(orientation='vertical', spacing=20, size_hint=(None, None), pos_hint={'center_x': 0.5})
         layout.width = 600
@@ -73,6 +77,7 @@ class MainScreenContent(AnchorLayout):
         self.add_widget(layout)
 
     def open_file_chooser(self, instance):
+        global selected_file
         filechooser = FileChooserIconView()
         popup = Popup(
             title="Выберите файл",
@@ -82,28 +87,27 @@ class MainScreenContent(AnchorLayout):
 
         def select_file(filechooser, selection, touch):
             if selection:
-                self.selected_file = selection[0]
-                print("Файл выбран:", selection[0])
+                App.get_running_app().selected_file = selection[0]
+                print("Файл выбран:", App.get_running_app().selected_file)
                 popup.dismiss()
 
         filechooser.bind(on_submit=select_file)
         popup.open()
 
     def send_for_check(self, instance):
-        if self.selected_file:
-            print(f"Файл {self.selected_file} отправлен на проверку")
+        if App.get_running_app().selected_file:
+            print(f"Файл {App.get_running_app().selected_file} отправлен на проверку")
+            for screen in self.screen_manager.screens:
+                if hasattr(screen, 'update_content_checks') and callable(screen.update_content_checks):
+                    screen.update_content_checks()
         else:
             print("Файл не выбран")
 
-        # Заглушка для Влада о успешном не успешном выполнении
-        result = False;
+        result = self.checker.run_all_checks()
 
-        if(result):
+        if result:
             self.status_label.text = "Проверка пройдена успешно"
-            self.status_label.color = (0, 1, 0, 1)
+            self.status_label.color = (0, 0.6, 0, 1)
         else:
-                self.status_label.text = "Шаблон не прошел проверку"
-                self.status_label.color = (1, 0, 0, 1)
-        self.status_label.color = self.status_label.color
-
-
+            self.status_label.text = "Шаблон не прошел проверку"
+            self.status_label.color = (1, 0, 0, 1)

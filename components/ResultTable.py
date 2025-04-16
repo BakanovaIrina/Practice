@@ -8,6 +8,8 @@ class ResultTable(GridLayout):
         self.populate(checks)
 
     def populate(self, checks: dict[str, callable]):
+        self.clear_widgets()
+
         for criterion, check_function in checks.items():
             try:
                 passed = check_function()
@@ -41,3 +43,6 @@ class ResultTable(GridLayout):
                 halign='right',
                 valign='middle'
             ))
+
+    def update_results(self, checks: dict[str, callable]):
+        self.populate(checks)

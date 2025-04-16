@@ -2,15 +2,16 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.anchorlayout import AnchorLayout
 
-from logic.Checker import Checker
 from components.ResultTable import ResultTable
 
 class StylesContent(AnchorLayout):
 
-    def __init__(self, **kwargs):
+    def __init__(self, checker, **kwargs):
         super().__init__(**kwargs)
         self.anchor_x = 'center'
         self.anchor_y = 'top'
+
+        self.checker = checker
 
         layout = BoxLayout(orientation='vertical', spacing=20,
                            size_hint=(None, None), pos_hint={'center_x': 0.5})
@@ -39,16 +40,24 @@ class StylesContent(AnchorLayout):
             text_size=(600, None),
         ))
 
-        checker = Checker()
 
         checks = {
-            "Формат листа": checker.check_page_format,
-            "Размеры полей": checker.check_margins,
-            "Интервалы текста": checker.check_line_spacing,
-            "Шрифт": checker.check_font_style,
+            "Формат листа": self.checker.check_page_format,
+            "Размеры полей": self.checker.check_margins,
+            "Интервалы текста": self.checker.check_line_spacing,
+            "Шрифт": self.checker.check_font_style,
         }
 
-        result_table = ResultTable(checks)
-        layout.add_widget(result_table)
+        self.result_table = ResultTable(checks)
+        layout.add_widget(self.result_table)
 
         self.add_widget(layout)
+
+    def update_checks(self):
+        self.checks = {
+            "Формат листа": self.checker.check_page_format,
+            "Размеры полей": self.checker.check_margins,
+            "Интервалы текста": self.checker.check_line_spacing,
+            "Шрифт": self.checker.check_font_style,
+        }
+        self.result_table.update_results(self.checks)

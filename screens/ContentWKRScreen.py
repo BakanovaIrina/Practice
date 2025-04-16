@@ -3,11 +3,15 @@ from kivy.uix.screenmanager import Screen
 from screenContent.ContentWKR import ContentWKR
 
 class ContentWKRScreen(Screen):
-    def __init__(self, **kwargs):
+    def __init__(self, checker, **kwargs):
         super().__init__(**kwargs)
         self.orientation = 'horizontal'
 
-        self.add_widget(ContentWKR())
+        self.content_widget = ContentWKR(checker=checker)
+        self.add_widget(self.content_widget)
+
+    def update_content_checks(self):
+        self.content_widget.update_checks()
 
     def update_bg(self, *args):
         self.bg.pos = self.pos

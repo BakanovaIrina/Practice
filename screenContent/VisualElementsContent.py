@@ -2,15 +2,15 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.anchorlayout import AnchorLayout
 
-from logic.Checker import Checker
 from components.ResultTable import ResultTable
 
 class VisualElementsContent(AnchorLayout):
 
-    def __init__(self, **kwargs):
+    def __init__(self, checker, **kwargs):
         super().__init__(**kwargs)
         self.anchor_x = 'center'
         self.anchor_y = 'top'
+        self.checker = checker
 
         layout = BoxLayout(orientation='vertical', spacing=20,
                            size_hint=(None, None), pos_hint={'center_x': 0.5})
@@ -34,15 +34,21 @@ class VisualElementsContent(AnchorLayout):
             height=30
         ))
 
-        checker = Checker()
-
         checks = {
             "Иллюстрации": checker.check_illustrations,
             "Формулы и уравнения": checker.check_equations,
             "Таблицы": checker.check_tables,
         }
 
-        result_table = ResultTable(checks)
-        layout.add_widget(result_table)
+        self.result_table = ResultTable(checks)
+        layout.add_widget(self.result_table)
 
         self.add_widget(layout)
+
+    def update_checks(self):
+        self.checks = {
+            "Иллюстрации": self.checker.check_illustrations,
+            "Формулы и уравнения": self.checker.check_equations,
+            "Таблицы": self.checker.check_tables,
+        }
+        self.result_table.update_results(self.checks)
