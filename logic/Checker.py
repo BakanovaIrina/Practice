@@ -43,9 +43,6 @@ class Checker:
     def check_illustrations(self):
         return True  # Проверка иллюстраций
 
-    def check_equations(self):
-        return False  # Проверка формул и уравнений
-
     def check_tables(self):
         return True  # Проверка таблиц
 

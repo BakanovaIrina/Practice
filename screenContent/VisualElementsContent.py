@@ -15,7 +15,7 @@ class VisualElementsContent(AnchorLayout):
         layout = BoxLayout(orientation='vertical', spacing=20,
                            size_hint=(None, None), pos_hint={'center_x': 0.5})
         layout.width = 600
-        layout.height = 260
+        layout.height = 220
 
         layout.add_widget(Label(
             text="Визуальные элементы",
@@ -27,7 +27,7 @@ class VisualElementsContent(AnchorLayout):
         ))
 
         layout.add_widget(Label(
-            text="Результаты проверки таблиц, иллюстраций и формул.",
+            text="Результаты проверки таблиц и иллюстраций.",
             font_size=18,
             color=(0, 0, 0, 1),
             size_hint=(1, None),
@@ -36,8 +36,7 @@ class VisualElementsContent(AnchorLayout):
 
         checks = {
             "Иллюстрации": checker.check_illustrations,
-            "Формулы и уравнения": checker.check_equations,
-            "Таблицы": checker.check_tables,
+            "Таблицы": checker.check_tables
         }
 
         self.result_table = ResultTable(checks)
@@ -48,7 +47,6 @@ class VisualElementsContent(AnchorLayout):
     def update_checks(self):
         self.checks = {
             "Иллюстрации": self.checker.check_illustrations,
-            "Формулы и уравнения": self.checker.check_equations,
             "Таблицы": self.checker.check_tables,
         }
         self.result_table.update_results(self.checks)
